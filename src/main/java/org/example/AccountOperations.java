@@ -79,6 +79,37 @@ public class AccountOperations {
 
     public static void withdrawBalance(Connection connection) throws SQLException {
 
+        String accNumber ;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER YOUR ACCOUNT NUMBER :");
+        accNumber = scanner.nextLine();
+        ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
+        long currentBalance = resultSet.getLong("balance");
+        System.out.println("HOW MUCH YOU WANT TO WITHDRAW");
+        long withdrawBalance = scanner.nextLong();
+        long netBalance = 0 ;
+        if(withdrawBalance <= currentBalance) {
+             netBalance = currentBalance - withdrawBalance;
+        } else {
+            System.out.println("YOU CAN NOT WITHDRAW MORE THAN YOU HAVE!");
+        }
+        String sqlQuery = "update accountTable1 set balance = ? where number = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        preparedStatement.setLong(1,netBalance);
+        preparedStatement.setString(2,accNumber);
+        int row = preparedStatement.executeUpdate();
+        if(row > 0){
+            System.out.println("BALANCE WITHDRAW SUCCESSFULLY");
+            System.out.println("BALANCE LEFT " +   netBalance);
+            showAccDetails(accNumber,connection);
+        } else {
+            System.out.println("BALANCE WITHDRAW FAILED ");
+        }
+
+
+
+
+
     }
 
     public static void depositBalance(Connection connection) throws SQLException {
@@ -114,5 +145,21 @@ public class AccountOperations {
         ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
         long balance = resultSet.getLong("balance");
         return balance;
+    }
+
+    public static void deleteAccount(Connection connection) throws Exception {
+        System.out.println("ENTER YOUR ACC NUMBER");
+        Scanner scanner = new Scanner(System.in);
+        String accNumber = scanner.nextLine();
+        String sqlQuery = "delete from accountTable1 where number = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        preparedStatement.setString(1,accNumber);
+        int rows = preparedStatement.executeUpdate();
+        if(rows > 0){
+            System.out.println("ACCOUNT DELETED SUCCESSFULLY");
+        } else {
+            System.out.println("ACCOUNT DELETION FAILED ");
+        }
+
     }
 }

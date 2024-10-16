@@ -52,6 +52,8 @@ public class App
                         AccountOperations.withdrawBalance(connection);
                         break;
                     case 5:
+                        AccountOperations.deleteAccount(connection);
+                        break ;
                     case 6:
                         System.out.println("exiting the application");
                         break MainLoop;
