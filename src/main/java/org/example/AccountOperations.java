@@ -48,17 +48,71 @@ public class AccountOperations {
 
     }
     public static void showAccDetails(String accNumber , Connection connection) throws SQLException {
-        System.out.println("\nYOUR ACCOUNT DETAILS");
+                System.out.println("\nYOUR ACCOUNT DETAILS");
+                ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
+                System.out.println("YOUR ACCOUNT NUMBER  :"+accNumber);
+                System.out.println("YOUR NAME            :"+resultSet.getString("name"));
+                System.out.println("YOUR ACCOUNT TYPE    :"+resultSet.getString("type"));
+                System.out.println("YOUR ACCOUNT BALANCE :"+resultSet.getString("balance"));
+
+    }
+    public static void checkBalance(Connection connection) throws SQLException {
+        String accNumber ;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER YOUR ACCOUNT NUMBER :");
+        accNumber = scanner.nextLine();
+        ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
+        System.out.println("YOUR CURRENT BALANCE IS "+resultSet.getString("balance"));
+
+    }
+    public static ResultSet getResultSetBasedOnAccNumber(Connection connection , String accNumber) throws SQLException {
         Statement statement = connection.createStatement();
         String sqlQuery = "select * from accountTable1";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
         while(resultSet.next()){
             if(resultSet.getString("number").equalsIgnoreCase(accNumber)){
-                System.out.println("YOUR ACCOUNT NUMBER  :"+accNumber);
-                System.out.println("YOUR NAME            :"+resultSet.getString("name"));
-                System.out.println("YOUR ACCOUNT TYPE    :"+resultSet.getString("type"));
-                System.out.println("YOUR ACCOUNT BALANCE :"+resultSet.getString("balance"));
+                return resultSet;
             }
         }
+        return null;
+    }
+
+    public static void withdrawBalance(Connection connection) throws SQLException {
+
+    }
+
+    public static void depositBalance(Connection connection) throws SQLException {
+        String accNumber ;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER YOUR ACCOUNT NUMBER :");
+        accNumber = scanner.nextLine();
+        ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
+        long balance = resultSet.getLong("balance");
+
+        System.out.println("HOW MUCH AMOUNT YOU WANT TO DEPOSIT");
+        long depositAmount = scanner.nextLong();
+        depositAmount += balance;
+        // update the new balance in the database
+        String sqlQuery = "update accountTable1 set balance = ? where number = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        preparedStatement.setLong(1, depositAmount);
+        preparedStatement.setString(2,accNumber);
+        int rows = preparedStatement.executeUpdate();
+        if(rows > 0){
+            System.out.println("BALANCE DEPOSITED SUCCESSFULLY");
+            showAccDetails(accNumber,connection);
+        } else {
+            System.out.println("BALANCE DEPOSIT FAILED ");
+        }
+
+    }
+    public static long getBalance(Connection connection ) throws SQLException {
+        String accNumber ;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("ENTER YOUR ACCOUNT NUMBER :");
+        accNumber = scanner.nextLine();
+        ResultSet resultSet = getResultSetBasedOnAccNumber(connection,accNumber);
+        long balance = resultSet.getLong("balance");
+        return balance;
     }
 }

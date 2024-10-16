@@ -31,9 +31,10 @@ public class App
 
                 System.out.println("1. CREATE NEW ACCOUNT ");
                 System.out.println("2. CHECK BALANCE ");
-                System.out.println("3. WITHDRAW BALANCE ");
-                System.out.println("4. DELETE YOUR ACCOUNT ");
-                System.out.println("5. EXIT ");
+                System.out.println("3. DEPOSIT BALANCE ");
+                System.out.println("4. WITHDRAW BALANCE ");
+                System.out.println("5. DELETE YOUR ACCOUNT ");
+                System.out.println("6. EXIT ");
 
                 int choice = scanner.nextInt();
 
@@ -42,9 +43,16 @@ public class App
                         AccountOperations.createNewAccount(connection);
                         break;
                     case 2:
+                        AccountOperations.checkBalance(connection);
+                        break;
                     case 3:
+                       AccountOperations.depositBalance(connection);
+                       break ;
                     case 4:
+                        AccountOperations.withdrawBalance(connection);
+                        break;
                     case 5:
+                    case 6:
                         System.out.println("exiting the application");
                         break MainLoop;
                     default:
